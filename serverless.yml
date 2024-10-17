@@ -1,0 +1,32 @@
+service: challenapp
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    DYNAMODB_TABLE: ${self:custom.dynamodbTableName}
+plugins:
+  - serverless-offline
+custom:
+  dynamodbTableName: products
+
+functions:
+  createProduct:
+    handler: dist/index.handler
+    events:
+      - http:
+          path: products
+          method: post
+resources:
+  Resources:
+    ItemsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodbTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
