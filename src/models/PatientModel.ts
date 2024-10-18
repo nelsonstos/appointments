@@ -11,6 +11,7 @@ export interface Patient extends Item {
   address?: string; // Opcional
   email?: string; // Opcional
   phoneNumber?: string; // Opcional
+  countryId: string;
 }
 
 // Define el esquema para la tabla de pacientes
@@ -42,6 +43,10 @@ const PatientSchema = new dynamoose.Schema(
     phoneNumber: {
       type: String,
       required: false,
+    },
+    countryId: {
+      type: String,
+      required: true,
     },
   },
   {

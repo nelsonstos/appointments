@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 
 import PatientRouter from './routes/PatientRoute';
 import DynamooseClient from './clients/dynamooseClient';
+import CountryRouter from './routes/CoutryRoute';
+import DoctorRouter from './routes/DoctorRoute';
 
 
 dotenv.config();
@@ -20,7 +22,9 @@ app.get('/', function (req: Request, res: Response) {
 // Inicializar el cliente Dynamoose
 DynamooseClient.getClient();
 
-app.use('/patients', PatientRouter)
+app.use('/patients', PatientRouter);
+app.use('/countries', CountryRouter);
+app.use('/doctors', DoctorRouter);
 
 
 export const handler = serveless(app);

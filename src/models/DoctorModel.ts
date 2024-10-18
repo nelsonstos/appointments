@@ -44,4 +44,4 @@ const DoctorSchema = new dynamoose.Schema({
 // Crear el modelo
 const DoctorModel = dynamoose.model<Doctor>(config.dynamoDoctorsTable, DoctorSchema);
 
-export default Doctor;
+export default DoctorModel;

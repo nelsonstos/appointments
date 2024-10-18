@@ -1,4 +1,3 @@
-// services/PatientService.ts
 
 import PatientModel, { Patient } from '../models/PatientModel'; // Asegúrate de tener el modelo Patient definido
 import { PatientRepository } from '../repositories/patientRepository';

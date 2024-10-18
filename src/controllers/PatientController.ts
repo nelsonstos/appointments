@@ -1,4 +1,3 @@
-// controllers/PatientController.ts
 import { Request, Response } from 'express';
 import PatientService from '../services/PatientService'; // Importa el servicio
 import asyncMiddleware from "../middlewares/async.middleware"; 

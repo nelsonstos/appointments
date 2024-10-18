@@ -13,6 +13,7 @@ provider:
     DYNAMODB_DOCTORS_TABLE: ${self:service}-${self:provider.stage}-doctors
     DYNAMODB_APPOINTMENTS_TABLE: ${self:service}-${self:provider.stage}-appointments
     DYNAMODB_USERS_TABLE: ${self:service}-${self:provider.stage}-users
+    DYNAMODB_COUNTRIES_TABLE: ${self:service}-${self:provider.stage}-countries
 
   iam:
     role:
@@ -28,6 +29,7 @@ provider:
             - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_DOCTORS_TABLE}"
             - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_APPOINTMENTS_TABLE}"
             - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_USERS_TABLE}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_COUNTRIES_TABLE}"
 
 functions:
   createPatient:
@@ -46,6 +48,31 @@ functions:
           path: patients
           method: get
           cors: true
+  createCountry:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: countries
+          method: post
+          cors: true
+
+  createDoctor:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: doctors
+          method: post
+          cors: true
+  getAllDoctor:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: doctors
+          method: get
+          cors: true
 resources:
   Resources:
     PatientsTable:
@@ -53,10 +80,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_PATIENTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: PatientId
+          - AttributeName: patientId
             AttributeType: S
         KeySchema:
-          - AttributeName: PatientId
+          - AttributeName: patientId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 
@@ -65,10 +92,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_DOCTORS_TABLE}
         AttributeDefinitions:
-          - AttributeName: DoctorId
+          - AttributeName: doctorId
             AttributeType: S
         KeySchema:
-          - AttributeName: DoctorId
+          - AttributeName: doctorId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 
@@ -77,14 +104,14 @@ resources:
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_APPOINTMENTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: CountryId
+          - AttributeName: countryId
             AttributeType: S
-          - AttributeName: AppointmentId
+          - AttributeName: appointmentId
             AttributeType: S
         KeySchema:
-          - AttributeName: CountryId
+          - AttributeName: countryId
             KeyType: HASH
-          - AttributeName: AppointmentId
+          - AttributeName: appointmentId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
 
@@ -93,10 +120,22 @@ resources:
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_USERS_TABLE}
         AttributeDefinitions:
-          - AttributeName: UserId
+          - AttributeName: userId
             AttributeType: S
         KeySchema:
-          - AttributeName: UserId
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    CountriesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_COUNTRIES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: countryId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: countryId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 
