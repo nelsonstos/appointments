@@ -1,32 +1,116 @@
-service: challenapp
+service: appointment-scheduler
+
+#frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: nodejs18.x
+  region: us-west-2
+  stage: dev
   environment:
-    DYNAMODB_TABLE: ${self:custom.dynamodbTableName}
-plugins:
-  - serverless-offline
-custom:
-  dynamodbTableName: products
+    DYNAMODB_ENDPOINT: http://localhost:4200 
+    DYNAMODB_PATIENTS_TABLE: ${self:service}-${self:provider.stage}-patients
+    DYNAMODB_DOCTORS_TABLE: ${self:service}-${self:provider.stage}-doctors
+    DYNAMODB_APPOINTMENTS_TABLE: ${self:service}-${self:provider.stage}-appointments
+    DYNAMODB_USERS_TABLE: ${self:service}-${self:provider.stage}-users
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:PutItem"
+            - "dynamodb:GetItem"
+            - "dynamodb:UpdateItem"
+            - "dynamodb:Query"
+          Resource:
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_PATIENTS_TABLE}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_DOCTORS_TABLE}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_APPOINTMENTS_TABLE}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_USERS_TABLE}"
 
 functions:
-  createProduct:
+  createPatient:
     handler: dist/index.handler
+    timeout: 30
     events:
       - http:
-          path: products
+          path: patients
           method: post
+          cors: true
+  getAllPatient:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: patients
+          method: get
+          cors: true
 resources:
   Resources:
-    ItemsTable:
+    PatientsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.dynamodbTableName}
+        TableName: ${self:provider.environment.DYNAMODB_PATIENTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: PatientId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: PatientId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+
+    DoctorsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_DOCTORS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: DoctorId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: DoctorId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    AppointmentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_APPOINTMENTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: CountryId
+            AttributeType: S
+          - AttributeName: AppointmentId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: CountryId
+            KeyType: HASH
+          - AttributeName: AppointmentId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_USERS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: UserId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: UserId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-offline
+  #- serverless-dynamodb-local
+
+# custom:
+#   dynamodb:
+#     start:
+#       port: 8000
+#       inMemory: true
+#       heapInitial: 200m
+#       heapMax: 1g
+#       migrate: true
+#     stages:
+#       - dev

@@ -2,7 +2,9 @@ import serveless from 'serverless-http';
 import express, { Request, Response  } from 'express';
 import dotenv from 'dotenv';
 
-import productRouter from './routes/product.routes';
+import PatientRouter from './routes/PatientRoute';
+import DynamooseClient from './clients/dynamooseClient';
+
 
 dotenv.config();
 
@@ -15,7 +17,10 @@ app.get('/', function (req: Request, res: Response) {
     res.send('Welcome to API!!')
 });
 
-app.use('/products', productRouter)
+// Inicializar el cliente Dynamoose
+DynamooseClient.getClient();
+
+app.use('/patients', PatientRouter)
 
 
 export const handler = serveless(app);
