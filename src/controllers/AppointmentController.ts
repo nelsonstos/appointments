@@ -1,14 +1,25 @@
-import { Request, Response } from 'express';
+import { json, Request, Response } from 'express';
 import asyncMiddleware from "../middlewares/async.middleware"; 
 import AppointmentService from '../services/AppointmentService';
+import { SNS } from 'aws-sdk';
+import { config } from '../config/config';
+
 
 class AppointmentController {
     private static appointmentService = new AppointmentService();
+    private static sns = new SNS();
+    private static snsTopicArn = config.snsTopicArn;
    
     static createAppointment= asyncMiddleware(async (req: Request, res: Response): Promise<void> => {
         const appointmentData = req.body; 
-        const newAppointment = await this.appointmentService.createAppointment(appointmentData);
-        res.status(201).json(newAppointment); 
+
+        // Publish Messages
+        await this.sns.publish({
+            Message: JSON.stringify(appointmentData),
+            TopicArn: this.snsTopicArn
+        }).promise();
+       // const newAppointment = await this.appointmentService.createAppointment(appointmentData);
+        res.status(202).json({ message: "Appointment request recieved"}); 
     });
 
 

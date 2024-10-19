@@ -16,7 +16,10 @@ const config = {
   dynamoDoctorsTable: process.env.DYNAMODB_DOCTORS_TABLE || '',
   dynamoAppointmentsTable: process.env.DYNAMODB_APPOINTMENTS_TABLE || '',
   dynamoUsersTable: process.env.DYNAMODB_USERS_TABLE || '',
-  dynamoCountriesTable: process.env.DYNAMODB_COUNTRIES_TABLE || ''
+  dynamoCountriesTable: process.env.DYNAMODB_COUNTRIES_TABLE || '',
+
+  snsTopicArn: process.env.SNS_TOPIC_ARN || '',
+  sqsQueueUrl: process.env.SQS_QUEUE_URL || ''
 };
 
 export { config };
