@@ -7,7 +7,7 @@ This project is a RESTful API for managing medical appointments across multiple 
 - **Multi-country appointment scheduling:** Supports multiple countries for both doctors and patients.
 - **RESTful API**: Endpoints for creating, reading, updating, and deleting appointments.
 - **DynamoDB with Dynamoose**: Utilizes DynamoDB's NoSQL capabilities with Dynamoose as a schema modeler.
-- **Global Secondary Index (GSI)**: For efficient querying by `countryId`.
+- **Global Secondary Index (GSI)**: For efficient querying by `countryId`, `doctorId`, `patientId`.
 
 ## Prerequisites
 
@@ -16,6 +16,53 @@ This project is a RESTful API for managing medical appointments across multiple 
 - **Serverless Framework** (v3)
 - **AWS Services** (Lambda, APIGateway, DynamoDB, AIM, SQS and SNS)
 - **Postman** (for testing API requests)
+
+## Disign and Architecture
+This project implements a serverless architecture using AWS Lambda, API Gateway, DynamoDB, Amazon SQS, and Amazon SNS, following a REST architectural style. The system is designed to manage medical appointments, patients, and doctors with support for multiple countries. To handle thousands of requests and prevent bottlenecks, Amazon SNS and SQS are integrated to provide an optimized asynchronous messaging mechanism for notifications and background task processing. Additionally, design patterns such as Singleton and dependency injection have been applied, along with a layered architecture, which contributes to the system's modularity and scalability.
+
+```bash
+
+    +------------------------+
+    |  Amazon API Gateway     |
+    |  (Gestiona las APIs)    |
+    +------------------------+
+                |
+                v
+    +------------------------+             +------------------------+
+    | AWS Lambda Functions    |            |  AWS DynamoDB          |
+    | (Lógica de negocio)     |<---------->|  (Base de Datos NoSQL) |
+    +------------------------+             +------------------------+
+                |
+                v
+    +------------------------+
+    | Amazon SNS             |
+    | (Notificaciones)    |
+    +------------------------+
+                |
+                v
+    +------------------------+
+    | AWS Lambda (Consumer)  |
+    | (Procesa mensajes SQS) |
+    +------------------------+
+                |
+                v
+    +--------------------------+            +----------------------+
+    | Amazon SQS               |            |  Amazon CloudWatch   |
+    | (Colas de Mensaje)       |            | (Monitoreo y Logs)   |
+    +--------------------------+            +----------------------+
+
+```
+
+## Processing by country
+The country-based processing involves receiving appointment requests through a service, which are then sent to an SQS queue. An SQS consumer, implemented in a Lambda function, processes these messages and extracts the appointment information, allowing for the management of requests based on the associated country. This optimizes system load by handling large volumes of data asynchronously and at scale.
+
+## Scalability and performance
+
+To optimize appointment processing by country, it's essential to address bottlenecks like high incoming request volumes, SQS processing delays, and database write performance. Solutions include implementing auto-scaling, batch processing, caching, and dead-letter queues to enhance efficiency. Additionally, using monitoring tools and multi-region deployment can improve visibility and reduce latency.
+
+## Security measures
+
+To ensure security in appointment processing, it is essential to implement robust authentication and authorization, encrypt sensitive data in transit and at rest, and validate user inputs to prevent attacks. Additionally, audit logs should be maintained, regular code reviews conducted, and DDoS protection measures applied. Finally, ongoing staff training in security best practices is crucial to protect sensitive information.
 
 ## Setup
 
@@ -130,6 +177,25 @@ Body (JSON)
 
 
 ```
+
+### 5. Get Doctor by countryId
+```bash
+POST /appointments/country/{countryId}/doctor/{doctorId}
+```
+Body (JSON)
+
+```bash
+{
+  "appointmentId": "appointment124",
+  "patientId": "0315",
+  "doctorId": "doctor001",
+  "appointmentDate": "2024-10-25T10:00:00Z",
+  "countryId": "US",
+  "state": "scheduled"
+}
+
+```
+
 
 
 # Key Points of the README:
