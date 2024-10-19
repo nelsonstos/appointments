@@ -1,4 +1,3 @@
-// models/Patient.ts
 import dynamoose from "dynamoose";
 import { config } from "../config/config";
 import { Item } from "dynamoose/dist/Item";

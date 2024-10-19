@@ -6,6 +6,7 @@ import PatientRouter from './routes/PatientRoute';
 import DynamooseClient from './clients/dynamooseClient';
 import CountryRouter from './routes/CoutryRoute';
 import DoctorRouter from './routes/DoctorRoute';
+import AppointmentRouter from './routes/AppointmentRoute';
 
 
 dotenv.config();
@@ -25,6 +26,7 @@ DynamooseClient.getClient();
 app.use('/patients', PatientRouter);
 app.use('/countries', CountryRouter);
 app.use('/doctors', DoctorRouter);
+app.use('/appointments', AppointmentRouter)
 
 
 export const handler = serveless(app);

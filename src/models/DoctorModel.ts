@@ -1,4 +1,3 @@
-// models/Doctor.js
 import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 import { config } from '../config/config';

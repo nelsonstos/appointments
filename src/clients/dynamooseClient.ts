@@ -1,4 +1,3 @@
-// clients/DynamooseClient.ts
 import { DynamoDB } from '@aws-sdk/client-dynamodb'; // SDK V3
 import dynamoose from 'dynamoose';
 import { config } from '../config/config';

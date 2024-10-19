@@ -13,6 +13,15 @@ export interface Appointment extends Item  {
 
 }
 
+export interface CreateOrUpdateAppointmentBody {
+  appointmentId: string;
+  patientId: string;
+  doctorId: string;
+  appointmentDate: string;
+  countryId: string;
+  state: string
+}
+
 // Definición del esquema para Cita Médica
 const AppointmentSchema = new dynamoose.Schema({
   appointmentId: {
@@ -22,10 +31,18 @@ const AppointmentSchema = new dynamoose.Schema({
   patientId: {
     type: String,
     rangeKey: true, // Clave de ordenación para consultas por paciente
+    index:{
+      name: 'patientIndex', // Nombre del índice
+      type: 'global' // Tipo de indice (global o local)
+    }
   },
   doctorId: {
     type: String,
     required: true,
+    index: {
+      name: 'doctorIndex', // Nombre del índice
+      type: 'global' // Tipo de indice (global o local)
+    }
   },
   appointmentDate: {
     type: String,
@@ -34,6 +51,11 @@ const AppointmentSchema = new dynamoose.Schema({
   countryId: {
     type: String,
     required: true,
+    index:{
+      name: 'countryIndex', // Nombre del índice
+      type: 'global' // Tipo de indice (global o local)
+    }
+    
   },
   state: {
     type: String,
@@ -43,9 +65,11 @@ const AppointmentSchema = new dynamoose.Schema({
 {
     timestamps: true,
     saveUnknown: true,
+    
+    
 }, );
 
 // Crear el modelo
-const Appointment = dynamoose.model<Appointment>(config.dynamoAppointmentsTable, AppointmentSchema);
+const AppointmentModel = dynamoose.model<Appointment>(config.dynamoAppointmentsTable, AppointmentSchema);
 
-export default Appointment;
+export default AppointmentModel;

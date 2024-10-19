@@ -73,6 +73,46 @@ functions:
           path: doctors
           method: get
           cors: true
+  createAppointment:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: appointments
+          method: post
+          cors: true
+  getAllAppointment:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: appointments
+          method: get
+          cors: true
+  getAppointmentsByCountryId:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: appointments/country/{countryId}
+          method: get
+          cors: true
+  getAppointmentsByDoctorId:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: appointments/doctor/{doctorId}
+          method: get
+          cors: true
+  getAppointmentsByCountryAndDoctor:
+    handler: dist/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: appointments/country/{countryId}/doctor/{doctorId}
+          method: get
+          cors: true
 resources:
   Resources:
     PatientsTable:
