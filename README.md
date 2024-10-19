@@ -94,6 +94,9 @@ DYNAMODB_DOCTORS_TABLE=appointment-scheduler-dev-doctors
 DYNAMODB_APPOINTMENTS_TABLE=appointment-scheduler-dev-appointments
 DYNAMODB_USERS_TABLE=appointment-scheduler-dev-users
 DYNAMODB_COUNTRIES_TABLE=appointment-scheduler-dev-countries
+# .env.development
+SNS_TOPIC_ARN=arn:aws:sns:us-east-1:123456789012:dev-appointments-topic
+SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789012/dev-appointments-queue
 ```
 
 ### 4. Running the Application
